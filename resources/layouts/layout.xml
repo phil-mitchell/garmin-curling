@@ -1,0 +1,14 @@
+<layout id="MainLayout">
+    <label id="id_start" text="@Strings.start" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_MEDIUM" />
+    <label id="id_resume" text="@Strings.resume" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_MEDIUM" />
+
+    <label id="id_stopwatch" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_NUMBER_HOT" />
+
+    <bitmap id="id_brush_stroke_icon" x="dc.getWidth() * .2" y="dc.getHeight() * 2 / 3" filename="../drawables/broom_icon.png" />
+    <label id="id_brush_stroke_count" x="dc.getWidth() * .2 + 34" y="dc.getHeight() * 2 / 3" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_XTINY" />
+
+    <bitmap id="id_throw_icon" x="dc.getWidth() * .8" y="dc.getHeight() * 2 / 3" filename="../drawables/rock_icon.png" />
+    <label id="id_throw_count" x="dc.getWidth() * .8 - 10" y="dc.getHeight() * 2 / 3" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_XTINY" />
+
+    <label id="id_time" x="center" y="bottom" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_SMALL" />
+</layout>

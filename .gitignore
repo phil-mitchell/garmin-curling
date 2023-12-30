@@ -1,0 +1,7 @@
+gen
+internal-mir
+mir
+bin
+garmincurling*.json
+garmincurling.prg*
+*.iq
