@@ -1,0 +1,16 @@
+<menu id="EstimateSelectorMenu">
+    <menu-item id="item0" label="HOG"></menu-item>
+    <menu-item id="item1" label="1"></menu-item>
+    <menu-item id="item2" label="2"></menu-item>
+    <menu-item id="item3" label="3"></menu-item>
+    <menu-item id="item4" label="4"></menu-item>
+    <menu-item id="item5" label="5"></menu-item>
+    <menu-item id="item6" label="6"></menu-item>
+    <menu-item id="item7" label="7"></menu-item>
+    <menu-item id="item8" label="8"></menu-item>
+    <menu-item id="item9" label="9"></menu-item>
+    <menu-item id="item10" label="10"></menu-item>
+    <menu-item id="item11" label="HACK"></menu-item>
+    <menu-item id="item12" label="BOARD"></menu-item>
+    <menu-item id="item13" label="HIT"></menu-item>
+</menu>

@@ -23,6 +23,8 @@ class CurlingProcess {
     private var _z as Array<Number> = [0] as Array<Number>;
     private var _filter as FirFilter?;
 
+    private var _pulse as Number = 0;
+
     private var _drawCount as Number = 0;
     private var _hitCount as Number = 0;
     private var _brushStrokeCount as Number = 0;
@@ -30,8 +32,12 @@ class CurlingProcess {
     private var _lastIntervalBrushStrokeCountRecorded as Number = 0;
     private var _lastSessionBrushStrokeCountRecorded as Number = 0;
 
+    private var _endNumber as Number = 0;
+
     private var _stopwatch as Number = 0;
     private var _stopwatchBase as Number = 0;
+    private var _splitTimes as Array<Number> = [99999, 4400, 4300, 4200, 4100, 4000, 3900, 3800, 3700, 3600, 3500, 3400, 3300, 3200] as Array<Number>;
+    private var _recordedTimes as Array<Number> = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1] as Array<Number>;
 
     private var _logger as SensorLogger?;
     private var _session as Session?;
@@ -53,6 +59,7 @@ class CurlingProcess {
         // initialize FIR filter
         var options = {:coefficients => [-0.0278f, 0.9444f, -0.0278f] as Array<Float>, :gain => 0.001f};
         try {
+            Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
             _filter = new Math.FirFilter(options);
             _logger = new SensorLogging.SensorLogger({:accelerometer => {:enabled => true}});
         } catch (e) {
@@ -92,6 +99,8 @@ class CurlingProcess {
             _intervalHitsField = _session.createField("Hits", 6, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
             _lapHitsField = _session.createField("End hits", 7, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
             _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
+
+            _endNumber = 1;
         }
 
         // initialize accelerometer
@@ -131,6 +140,7 @@ class CurlingProcess {
         _session = null;
         resetData();
         _lastSessionBrushStrokeCountRecorded = 0;
+        _endNumber = 0;
 
         if (session != null) {
             if (save) {
@@ -146,6 +156,7 @@ class CurlingProcess {
     public function onLap() as Void {
         if (_session != null) {
             _session.addLap();
+            _endNumber++;
             resetData();
         }
     }
@@ -251,12 +262,87 @@ class CurlingProcess {
         return _stopwatch;
     }
 
+    public function getStopwatchEstimate() as Number {
+        for (var i = _splitTimes.size() - 1; i >= 0; --i) {
+            if (_stopwatch <= _splitTimes[i]) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     public function toggleStopwatch() {
         if (_stopwatchBase != 0) {
             getStopwatchValue();
             _stopwatchBase = 0;
         } else {
             _stopwatchBase = System.getTimer();
+        }
+    }
+
+    public function getCurrentEnd() as Number {
+        return _endNumber;
+    }
+
+    public function getPulse() as Number {
+        var info = Sensor.getInfo();
+        if( info.heartRate != null ) {
+            _pulse = info.heartRate;
+        }
+        return _pulse;
+    }
+
+    public function addSplit(result as Number) as Void {
+        if (_stopwatch == 0) {
+            return;
+        }
+
+        if(result > 0 || result < _recordedTimes.size()-1 || 
+            (result == 0 && _recordedTimes[result] > _stopwatch) || 
+            (result == _recordedTimes.size()-1 && _recordedTimes[result] < _stopwatch)) {
+            // for hogged rocks, only record the fastest known hogged rock
+            // for hits, only record the slowest known hit
+            // for all other rocks, always record this time
+            _recordedTimes[result] = _stopwatch;
+        }
+
+        for (var i = 0; i < _recordedTimes.size(); ++i) {
+            if (i < result && _recordedTimes[i] <= _stopwatch) {
+                // if a faster time was recorded for a shorter throw
+                // then throw out that record; the ice may have sped up
+                _recordedTimes[i] = -1;
+            }
+            if (i > result && _recordedTimes[i] >= _stopwatch) {
+                // if a slower time was recorded for a longer throw
+                // then throw out that record; the ice may have slowed down
+                _recordedTimes[i] = -1;
+            }
+        }
+
+        var lastRecordedPos = -1;
+        var averageDiff = 100;
+        for (var i = 0; i < _recordedTimes.size(); ++i) {
+            if (_recordedTimes[i] > 0) {
+                _splitTimes[i] = _recordedTimes[i];
+                if(lastRecordedPos >= 0) {
+                    // calculate the step difference and fill in the blanks
+                    averageDiff = (_recordedTimes[lastRecordedPos] - _recordedTimes[i]) / (i - lastRecordedPos);
+                    for (var j = lastRecordedPos + 1; j < i; ++j) {
+                        _splitTimes[j] = _recordedTimes[lastRecordedPos] - (j-lastRecordedPos) * averageDiff;
+                    }
+                } else if (i > 0) {
+                    for (var j = i-1; j >= 0; --j) {
+                        _splitTimes[j] = _recordedTimes[i] + (i-j) * averageDiff;
+                    }
+                }
+                lastRecordedPos = i;
+            }
+        }
+
+        if (lastRecordedPos >= 0) {
+            for (var j = lastRecordedPos+1; j < _recordedTimes.size(); ++j) {
+                _splitTimes[j] = _recordedTimes[lastRecordedPos] - (j-lastRecordedPos) * averageDiff;
+            }
         }
     }
 }
