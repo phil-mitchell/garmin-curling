@@ -37,28 +37,28 @@ The exact controls depend on which device you're using.
 
 ### Touch-screen 5-button devices (e.g. fēnix® devices)
 
-Top-right button will start/stop the activity.
-Bottom-right button will mark a new end.
-Tap the screen OR "up" button (middle left) to start/stop the stopwatch.
-Hold the screen OR "menu" button (hold middle left) to update the actual stopping position of the rock.
+- Top-right button will start/stop the activity.
+- Bottom-right button will mark a new end.
+- Tap the screen OR "up" button (middle left) to start/stop the stopwatch.
+- Hold the screen OR "menu" button (hold middle left) to update the actual stopping position of the rock.
 
 ### Touch-screen 2-button devices (e.g. vivoactive 4+)
 
-Top-right button will start/stop the activity.
-Bottom-right button will mark a new end.
-Tap the screen to start/stop the stopwatch.
-Hold the screen to update the actual stopping position of the rock.
+- Top-right button will start/stop the activity.
+- Bottom-right button will mark a new end.
+- Tap the screen to start/stop the stopwatch.
+- Hold the screen to update the actual stopping position of the rock.
 
 ### Touch-creen 1-button devices (e.g. vivoactive 3)
 
-Button with start/stop the activity.
-Swipe-right will mark a new end.
-Tap the screen to start/stop the stopwatch.
-Swipe-up to update the actual stopping position of the rock.
+- Button with start/stop the activity.
+- Swipe-right will mark a new end.
+- Tap the screen to start/stop the stopwatch.
+- Swipe-up to update the actual stopping position of the rock.
 
 ### 5-button devices (e.g. MARQ® devices)
 
-Top-right button will start/stop the activity.
-Bottom-right button will mark a new end.
-Up button (middle left) to start/stop the stopwatch.
-Menu button (hold middle left) to update the actual stopping position of the rock.
+- Top-right button will start/stop the activity.
+- Bottom-right button will mark a new end.
+- Up button (middle left) to start/stop the stopwatch.
+- Menu button (hold middle left) to update the actual stopping position of the rock.
