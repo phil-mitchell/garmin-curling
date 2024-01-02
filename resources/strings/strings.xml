@@ -1,8 +1,8 @@
 <strings>
     <string id="AppName">Curling</string>
 
-    <string id="start">Press Start\nto Begin</string>
-    <string id="resume">Press Start\nto Resume</string>
+    <string id="start">Press Start\nto begin</string>
+    <string id="resume">Press Start\nto resume</string>
 
     <string id="menu_label_1">Resume</string>
     <string id="menu_label_2">Save</string>

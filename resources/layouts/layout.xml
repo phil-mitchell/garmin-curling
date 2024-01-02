@@ -1,10 +1,6 @@
 <layout id="MainLayout">
-    <bitmap id="id_pulse_icon" x="dc.getWidth() * .4" y="dc.getHeight() * .1" filename="../drawables/heart_icon.png" />
-    <label id="id_pulse" x="dc.getWidth() * .4 + 34" y="dc.getHeight() * .1" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_GLANCE_NUMBER" />
-
-
-    <label id="id_start" text="@Strings.start" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_MEDIUM" />
-    <label id="id_resume" text="@Strings.resume" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_MEDIUM" />
+    <bitmap id="id_pulse_icon" x="dc.getWidth() * .4" y="20" filename="../drawables/heart_icon.png" />
+    <label id="id_pulse" x="dc.getWidth() * .4 + 34" y="17" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_GLANCE_NUMBER" />
 
     <label id="id_stopwatch" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_NUMBER_HOT" />
 

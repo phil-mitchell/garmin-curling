@@ -103,17 +103,33 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
                 }
                 return _view.isSessionActive();
             }
+        } else if(key == WatchUi.KEY_UP) {
+            if (_view.isSessionRecording()) {
+                _view.onStopwatchToggle();
+                return true;
+            }
         }
         return false;
     }
 
     // Block access to the menu button
     function onMenu() as Lang.Boolean {
+        if (_view.isSessionRecording()) {
+            WatchUi.pushView(new Rez.Menus.EstimateSelectorMenu(), new EstimateSelectorMenuDelegate(_view), WatchUi.SLIDE_UP);
+            return true;            
+        }
         return _view.isSessionActive();
     }
 
     function onSwipe(swipeEvent as WatchUi.SwipeEvent) as Lang.Boolean {
-         return _view.isSessionActive();
+        if ((System.getDeviceSettings().inputButtons & System.BUTTON_INPUT_ESC) == 0 && Toybox has :ActivityRecording && _view.isSessionRecording()) {
+            if (swipeEvent.getDirection() == WatchUi.SWIPE_RIGHT ) {
+                _view.onLap();
+            } else if (swipeEvent.getDirection() == WatchUi.SWIPE_UP ) {
+                WatchUi.pushView(new Rez.Menus.EstimateSelectorMenu(), new EstimateSelectorMenuDelegate(_view), WatchUi.SLIDE_UP);
+            }
+        }
+        return _view.isSessionActive();
     }
 
     function onTap(clickEvent as WatchUi.ClickEvent) as Lang.Boolean {
@@ -134,8 +150,6 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
 }
 
 class CurlingView extends WatchUi.View {
-    private var _labelStart as Text?;
-    private var _labelResume as Text?;
     private var _labelStopwatch as Text?;
     private var _labelDrawCount as Text?;
     private var _labelHitCount as Text?;
@@ -146,6 +160,9 @@ class CurlingView extends WatchUi.View {
     private var _labelEstimates as Array<Text?> = [] as Array<Text?>;
     private var _curling as CurlingProcess;
     private var _selectedEstimate as Number = -1;
+
+    private var _stringStart as String?;
+    private var _stringResume as String?;
 
     private var _clockTimer;
 
@@ -162,8 +179,6 @@ class CurlingView extends WatchUi.View {
     //! @param dc Device context
     public function onLayout(dc) as Void {
         setLayout($.Rez.Layouts.MainLayout(dc));
-        _labelStart = View.findDrawableById("id_start") as Text;
-        _labelResume = View.findDrawableById("id_resume") as Text;
         _labelStopwatch = View.findDrawableById("id_stopwatch") as Text;
         _labelDrawCount = View.findDrawableById("id_draw_count") as Text;
         _labelHitCount = View.findDrawableById("id_hit_count") as Text;
@@ -171,6 +186,9 @@ class CurlingView extends WatchUi.View {
         _labelEndCount = View.findDrawableById("id_end_count") as Text;
         _labelTime = View.findDrawableById("id_time") as Text;
         _labelPulse = View.findDrawableById("id_pulse") as Text;
+
+        _stringStart = WatchUi.loadResource(Rez.Strings.start);
+        _stringResume = WatchUi.loadResource(Rez.Strings.resume);
 
         for( var i = 0; i < NUM_ESTIMATES; ++i) {
             _labelEstimates.add(View.findDrawableById("id_estimate_" + i) as Text);
@@ -198,11 +216,7 @@ class CurlingView extends WatchUi.View {
         var recording = isSessionRecording();
         var active = isSessionActive();
 
-        _labelStopwatch.setVisible(recording);
-        _labelStart.setVisible(!recording && !active);
-        _labelResume.setVisible(!recording && active);
         for( var i = 0; i < _labelEstimates.size(); ++i) {
-            _labelEstimates[i].setVisible(recording);
             _labelEstimates[i].setColor(0x214C0C);
         }   
 
@@ -215,11 +229,18 @@ class CurlingView extends WatchUi.View {
             var stopwatch = _curling.getStopwatchValue();
             var stopwatchStr = (stopwatch/1000).format("%02d") + "." + (stopwatch%1000).format("%03d");
             _labelStopwatch.setText(stopwatchStr);
+            _labelStopwatch.setFont(Graphics.FONT_NUMBER_HOT);
 
             var stopwatchEstimate = _curling.getStopwatchEstimate();
             if (stopwatchEstimate > -1) {
                 _labelEstimates[stopwatchEstimate].setColor(0x6CED2D);
             }
+        } else if(active) {
+            _labelStopwatch.setFont(Graphics.FONT_MEDIUM);
+            _labelStopwatch.setText(_stringResume);
+        } else {
+            _labelStopwatch.setFont(Graphics.FONT_MEDIUM);
+            _labelStopwatch.setText(_stringStart);
         }
 
         var clockTime = System.getClockTime();
