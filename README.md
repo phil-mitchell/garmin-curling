@@ -62,3 +62,5 @@ The exact controls depend on which device you're using.
 - Bottom-right button will mark a new end.
 - Up button (middle left) to start/stop the stopwatch.
 - Menu button (hold middle left) to update the actual stopping position of the rock.
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik"> Freepik </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
