@@ -51,7 +51,7 @@ The exact controls depend on which device you're using.
 
 ### Touch-creen 1-button devices (e.g. vivoactive 3)
 
-- Button with start/stop the activity.
+- Button will start/stop the activity.
 - Swipe-right will mark a new end.
 - Tap the screen to start/stop the stopwatch.
 - Swipe-up to update the actual stopping position of the rock.
