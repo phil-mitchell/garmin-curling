@@ -73,6 +73,9 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
 
     private var _view as CurlingView;
 
+    private var _lastTapTime as Number = 0;
+    private var _recentTapCount as Number = 0;
+
     //! Constructor
     //! @param view The app view
     public function initialize(view as CurlingView) {
@@ -106,6 +109,15 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
         } else if(key == WatchUi.KEY_UP) {
             if (_view.isSessionRecording()) {
                 _view.onStopwatchToggle();
+                if (System.getTimer() - _lastTapTime < 1000) {
+                    _recentTapCount++;
+                    if (_recentTapCount == 4) {
+                        _view.startExtraLogging(10);
+                    }
+                } else {
+                    _lastTapTime = System.getTimer();
+                    _recentTapCount = 1;
+                }
                 return true;
             }
         }
@@ -135,6 +147,15 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
     function onTap(clickEvent as WatchUi.ClickEvent) as Lang.Boolean {
         if (_view.isSessionRecording()) {
             _view.onStopwatchToggle();
+            if (System.getTimer() - _lastTapTime < 1000) {
+                _recentTapCount++;
+                if (_recentTapCount == 4) {
+                    _view.startExtraLogging(10);
+                }
+            } else {
+                _lastTapTime = System.getTimer();
+                _recentTapCount = 1;
+            }
             return true;
         }
         return false;
@@ -225,10 +246,15 @@ class CurlingView extends WatchUi.View {
         _labelBrushStrokeCount.setText("" + _curling.getBrushStrokeCount());
         _labelEndCount.setText("" + _curling.getCurrentEnd());
 
-        if(recording) {
-            var stopwatch = _curling.getStopwatchValue();
-            var stopwatchStr = (stopwatch/1000).format("%02d") + "." + (stopwatch%1000).format("%03d");
-            _labelStopwatch.setText(stopwatchStr);
+        if(recording) {            
+            var extraLoggingDuration = _curling.getExtraLoggingDuration();
+            if (extraLoggingDuration > 0) {
+                _labelStopwatch.setText(extraLoggingDuration.format("%02d"));
+            } else {
+                var stopwatch = _curling.getStopwatchValue();
+                var stopwatchStr = (stopwatch/1000).format("%02d") + "." + (stopwatch%1000).format("%03d");
+                _labelStopwatch.setText(stopwatchStr);
+            }
             _labelStopwatch.setFont(Graphics.FONT_NUMBER_HOT);
 
             var stopwatchEstimate = _curling.getStopwatchEstimate();
@@ -285,5 +311,9 @@ class CurlingView extends WatchUi.View {
 
     public function addSplit(result as Number) as Void {
         _curling.addSplit(result);
+    }
+
+    public function startExtraLogging(duration as Number) as Void {
+        _curling.startExtraLogging(duration);
     }
 }

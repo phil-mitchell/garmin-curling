@@ -17,7 +17,7 @@ class CurlingProcess {
     private const SWEEP_THR_Y = 1000;
     private const SWEEP_WAVELENGTH = 10;
 
-    private var _x as Array<Float> = [0.0] as Array<Float>;
+    private var _x as Array<Number> = [0] as Array<Number>;
     private var _y as Array<Number> = [0] as Array<Number>;
     private var _yPrev as Array<Number> = [0] as Array<Number>;
     private var _z as Array<Number> = [0] as Array<Number>;
@@ -39,6 +39,8 @@ class CurlingProcess {
     private var _splitTimes as Array<Number> = [99999, 4400, 4300, 4200, 4100, 4000, 3900, 3800, 3700, 3600, 3500, 3400, 3300, 3200] as Array<Number>;
     private var _recordedTimes as Array<Number> = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1] as Array<Number>;
 
+    private var _extraLoggingCount = -1;
+
     private var _logger as SensorLogger?;
     private var _session as Session?;
 
@@ -54,13 +56,17 @@ class CurlingProcess {
     private var _lapHitsField;
     private var _sessionHitsField;
 
+    private var _accelXField;    
+    private var _accelYField;    
+    private var _accelZField;    
+
     //! Constructor
     public function initialize() {
         // initialize FIR filter
         var options = {:coefficients => [-0.0278f, 0.9444f, -0.0278f] as Array<Float>, :gain => 0.001f};
         try {
             Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
-            _filter = new Math.FirFilter(options);
+            //_filter = new Math.FirFilter(options);
             _logger = new SensorLogging.SensorLogger({:accelerometer => {:enabled => true}});
         } catch (e) {
             System.println(e.getErrorMessage());
@@ -75,10 +81,26 @@ class CurlingProcess {
             _yPrev = _y;
             _lastBrushStrokeCounted -= _yPrev.size();
             if (_filter != null) {
-                _x = _filter.apply(accelData.x);
+                //_x = _filter.apply(accelData.x);
+            } else {
+                _x = accelData.x;
             }
             _y = accelData.y;
             _z = accelData.z;
+
+            if (_extraLoggingCount > 0) {
+                System.println("Adding accelerometer data");
+                _accelXField.setData(_x);
+                _accelYField.setData(_y);
+                _accelZField.setData(_z);
+                _extraLoggingCount--;
+            } else if (_extraLoggingCount == 0) {
+                System.println("Clearing accelerometer data");
+                _accelXField.setData([] as Array<Number>);
+                _accelYField.setData([] as Array<Number>);
+                _accelZField.setData([] as Array<Number>);
+                _extraLoggingCount--;
+            }
             onAccelData();
         }
     }
@@ -99,6 +121,13 @@ class CurlingProcess {
             _intervalHitsField = _session.createField("Hits", 6, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
             _lapHitsField = _session.createField("End hits", 7, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
             _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
+
+            _accelXField = _session.createField("AcccelerationX", 131, FitContributor.DATA_TYPE_SINT16, {
+                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
+            _accelYField = _session.createField("AccelerationY", 132, FitContributor.DATA_TYPE_SINT16, {
+                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
+            _accelZField = _session.createField("AccelerationZ", 133, FitContributor.DATA_TYPE_SINT16, {
+                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
 
             _endNumber = 1;
         }
@@ -278,6 +307,14 @@ class CurlingProcess {
         } else {
             _stopwatchBase = System.getTimer();
         }
+    }
+
+    public function startExtraLogging(duration as Number) as Void {
+        _extraLoggingCount = duration;
+    }
+
+    public function getExtraLoggingDuration() as Number {
+        return _extraLoggingCount;
     }
 
     public function getCurrentEnd() as Number {

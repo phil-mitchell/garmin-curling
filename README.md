@@ -41,6 +41,8 @@ The exact controls depend on which device you're using.
 - Bottom-right button will mark a new end.
 - Tap the screen OR "up" button (middle left) to start/stop the stopwatch.
 - Hold the screen OR "menu" button (hold middle left) to update the actual stopping position of the rock.
+- 4 taps in less than 1 second will activate enhanced recording mode for 10 seconds.
+  This records the high resolution accelerometer data which can help diagnose issues with movement detection.
 
 ### Touch-screen 2-button devices (e.g. vivoactive 4+)
 
@@ -48,13 +50,17 @@ The exact controls depend on which device you're using.
 - Bottom-right button will mark a new end.
 - Tap the screen to start/stop the stopwatch.
 - Hold the screen to update the actual stopping position of the rock.
+- 4 taps in less than 1 second will activate enhanced recording mode for 10 seconds.
+  This records the high resolution accelerometer data which can help diagnose issues with movement detection.
 
-### Touch-creen 1-button devices (e.g. vivoactive 3)
+### Touch-screen 1-button devices (e.g. vivoactive 3)
 
 - Button will start/stop the activity.
 - Swipe-right will mark a new end.
 - Tap the screen to start/stop the stopwatch.
 - Swipe-up to update the actual stopping position of the rock.
+- 4 taps in less than 1 second will activate enhanced recording mode for 10 seconds.
+  This records the high resolution accelerometer data which can help diagnose issues with movement detection.
 
 ### 5-button devices (e.g. MARQ® devices)
 
@@ -62,6 +68,8 @@ The exact controls depend on which device you're using.
 - Bottom-right button will mark a new end.
 - Up button (middle left) to start/stop the stopwatch.
 - Menu button (hold middle left) to update the actual stopping position of the rock.
+- 4 presses of the Up button in less than 1 second will activate enhanced recording mode for 10 seconds.
+  This records the high resolution accelerometer data which can help diagnose issues with movement detection.
 
 ## Supported devices
 

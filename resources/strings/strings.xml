@@ -24,4 +24,10 @@
     <string id="hit_count">Throw Count</string>
     <string id="stroke_count">Brush Stroke Count</string>
 
+    <string id="accel_unit">mgn</string>
+    <string id="accel_x">AccelerationX</string>
+    <string id="accel_y">AccelerationY</string>
+    <string id="accel_z">AccelerationZ</string>
+
+
 </strings>
