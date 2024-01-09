@@ -23,19 +23,19 @@
         <fitField id="8" displayInActivitySummary="true" sortOrder = "8" precision="-1"
         dataLabel="@Strings.hit_label" unitLabel="@Strings.hit_units"  />        
 
-  <fitField id="131"
+  <fitField id="9"
             displayInChart="false"
-            sortOrder="131"
+            sortOrder="9"
             dataLabel="@Strings.accel_x"
             unitLabel="@Strings.accel_unit" />
-  <fitField id="132"
+  <fitField id="10"
             displayInChart="false"
-            sortOrder="132"
+            sortOrder="10"
             dataLabel="@Strings.accel_y"
             unitLabel="@Strings.accel_unit" />
-  <fitField id="133"
+  <fitField id="11"
             displayInChart="false"
-            sortOrder="133"
+            sortOrder="11"
             dataLabel="@Strings.accel_z"
             unitLabel="@Strings.accel_unit" />
 </fitContributions>

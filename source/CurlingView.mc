@@ -241,9 +241,9 @@ class CurlingView extends WatchUi.View {
             _labelEstimates[i].setColor(0x214C0C);
         }   
 
-        _labelDrawCount.setText("" + _curling.getDrawCount());
-        _labelHitCount.setText("" + _curling.getDrawCount());
-        _labelBrushStrokeCount.setText("" + _curling.getBrushStrokeCount());
+        _labelDrawCount.setText("" + _curling.getDrawCount(true) + "/" + _curling.getDrawCount(false));
+        _labelHitCount.setText("" + _curling.getHitCount(true) + "/" + _curling.getHitCount(false));
+        _labelBrushStrokeCount.setText("" + _curling.getBrushStrokeCount(true) + "/" + _curling.getBrushStrokeCount(false));
         _labelEndCount.setText("" + _curling.getCurrentEnd());
 
         if(recording) {            

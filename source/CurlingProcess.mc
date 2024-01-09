@@ -89,16 +89,15 @@ class CurlingProcess {
             _z = accelData.z;
 
             if (_extraLoggingCount > 0) {
-                System.println("Adding accelerometer data");
                 _accelXField.setData(_x);
                 _accelYField.setData(_y);
                 _accelZField.setData(_z);
                 _extraLoggingCount--;
             } else if (_extraLoggingCount == 0) {
-                System.println("Clearing accelerometer data");
-                _accelXField.setData([] as Array<Number>);
-                _accelYField.setData([] as Array<Number>);
-                _accelZField.setData([] as Array<Number>);
+                var zeroArray = ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as Array<Number>).slice(0,Sensor.getMaxSampleRate());
+                _accelXField.setData(zeroArray);
+                _accelYField.setData(zeroArray);
+                _accelZField.setData(zeroArray);
                 _extraLoggingCount--;
             }
             onAccelData();
@@ -122,18 +121,18 @@ class CurlingProcess {
             _lapHitsField = _session.createField("End hits", 7, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
             _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
 
-            _accelXField = _session.createField("AcccelerationX", 131, FitContributor.DATA_TYPE_SINT16, {
-                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
-            _accelYField = _session.createField("AccelerationY", 132, FitContributor.DATA_TYPE_SINT16, {
-                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
-            _accelZField = _session.createField("AccelerationZ", 133, FitContributor.DATA_TYPE_SINT16, {
-                :count => 25, :mesgType => FitContributor.MESG_TYPE_RECORD as Number});
+            _accelXField = _session.createField("acc X", 9, FitContributor.DATA_TYPE_SINT16, {
+                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
+            _accelYField = _session.createField("acc Y", 10, FitContributor.DATA_TYPE_SINT16, {
+                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
+            _accelZField = _session.createField("acc Z", 11, FitContributor.DATA_TYPE_SINT16, {
+                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
 
             _endNumber = 1;
         }
 
         // initialize accelerometer
-        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => 25}};
+        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => Sensor.getMaxSampleRate()}};
         try {
             Sensor.registerSensorDataListener(method(:accelCallback), options);
             if (_session != null) {
@@ -192,20 +191,23 @@ class CurlingProcess {
 
     //! Return current throw count
     //! @return The number of draws counted
-    public function getDrawCount() as Number {
+    public function getDrawCount(currentEnd as Boolean) as Number {
         return _drawCount;
     }
 
     //! Return current throw count
     //! @return The number of hits counted
-    public function getHitCount() as Number {
+    public function getHitCount(currentEnd as Boolean) as Number {
         return _hitCount;
     }
 
     //! Return current brush stroke count
     //! @return The number of brush strokes counted
-    public function getBrushStrokeCount() as Number {
-        return _brushStrokeCount;
+    public function getBrushStrokeCount(currentEnd as Boolean) as Number {
+        if (currentEnd) {
+            return _brushStrokeCount;
+        }
+        return _lastSessionBrushStrokeCountRecorded;
     }
 
     //! Get the total number of seconds of logged data
