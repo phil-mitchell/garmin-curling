@@ -1,7 +1,8 @@
 <layout id="MainLayout">
+<!--
     <bitmap id="id_pulse_icon" x="dc.getWidth() * .4" y="20" filename="../drawables/heart_icon.png" />
     <label id="id_pulse" x="dc.getWidth() * .4 + 34" y="17" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_GLANCE_NUMBER" />
-
+-->
     <label id="id_stopwatch" x="center" y="center" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_NUMBER_HOT" />
 
     <label id="id_estimate_0" text="HOG" x="dc.getWidth() * 0.01" y="dc.getHeight() * .5" color="#214C0C" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_XTINY" />
@@ -25,12 +26,16 @@
     <bitmap id="id_end_icon" x="dc.getWidth() * .2" y="dc.getHeight() * .7" filename="../drawables/end_icon.png" />
     <label id="id_end_count" x="dc.getWidth() * .2 + 34" y="dc.getHeight() * .7" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_GLANCE_NUMBER" />
 
+    <bitmap id="id_pulse_icon" x="dc.getWidth() * .8" y="dc.getHeight() * .6" filename="../drawables/heart_icon.png" />
+    <label id="id_pulse" x="dc.getWidth() * .8 - 10" y="dc.getHeight() * .6" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_GLANCE_NUMBER" />
+
+<!--
     <bitmap id="id_throw_icon_draw" x="dc.getWidth() * .8" y="dc.getHeight() * .6" filename="../drawables/rock_icon.png" />
     <label id="id_draw_count" x="dc.getWidth() * .8 - 10" y="dc.getHeight() * .6" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_GLANCE_NUMBER" />
 
     <bitmap id="id_throw_icon_hit1" x="dc.getWidth() * .8" y="dc.getHeight() * .7" filename="../drawables/rock_icon.png" />
     <bitmap id="id_throw_icon_hit2" x="dc.getWidth() * .85" y="dc.getHeight() * .7" filename="../drawables/rock_icon.png" />
     <label id="id_hit_count" x="dc.getWidth() * .8 - 10" y="dc.getHeight() * .7" color="#6CED2D" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_GLANCE_NUMBER" />
-
+-->
     <label id="id_time" x="center" y="bottom" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER" font="Graphics.FONT_SMALL" />
 </layout>

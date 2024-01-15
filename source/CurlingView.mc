@@ -3,6 +3,23 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.System;
 
+class ConfirmDiscardDelegate extends WatchUi.ConfirmationDelegate {
+    private var _view as CurlingView;
+    function initialize(view as CurlingView) {
+        System.println("init");
+        ConfirmationDelegate.initialize();
+        _view = view;
+    }
+
+    function onResponse(response) as Boolean {
+        if (response == WatchUi.CONFIRM_YES) {
+            _view.onDiscard();
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        }
+        return true;
+    }
+}
+
 // This delegate handles input for the Menu pushed when the user
 // hits the stop button
 class MainMenuDelegate extends WatchUi.MenuInputDelegate {
@@ -21,7 +38,13 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
         } else if (item == :save) {
             _view.onSave();
         } else if (item == :discard) {
-            _view.onDiscard();
+            var message = "Really discard?";
+            var dialog = new WatchUi.Confirmation(message);
+            WatchUi.pushView(
+                dialog,
+                new ConfirmDiscardDelegate(_view),
+                WatchUi.SLIDE_IMMEDIATE
+            );
         }
     }
 }
@@ -87,7 +110,6 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
     //! @return true if handled, false otherwise
     public function onKey(keyEvent as WatchUi.KeyEvent) as Boolean {
         var key = keyEvent.getKey();
-        System.println(key as Number);
         if (key == WatchUi.KEY_START || key == WatchUi.KEY_ENTER) {
             if (Toybox has :ActivityRecording) {
                 if (!_view.isSessionRecording()) {
@@ -171,6 +193,7 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
 }
 
 class CurlingView extends WatchUi.View {
+    private var _lastScreenUpdate as Number = 0;
     private var _labelStopwatch as Text?;
     private var _labelDrawCount as Text?;
     private var _labelHitCount as Text?;
@@ -201,8 +224,8 @@ class CurlingView extends WatchUi.View {
     public function onLayout(dc) as Void {
         setLayout($.Rez.Layouts.MainLayout(dc));
         _labelStopwatch = View.findDrawableById("id_stopwatch") as Text;
-        _labelDrawCount = View.findDrawableById("id_draw_count") as Text;
-        _labelHitCount = View.findDrawableById("id_hit_count") as Text;
+        //_labelDrawCount = View.findDrawableById("id_draw_count") as Text;
+        //_labelHitCount = View.findDrawableById("id_hit_count") as Text;
         _labelBrushStrokeCount = View.findDrawableById("id_brush_stroke_count") as Text;
         _labelEndCount = View.findDrawableById("id_end_count") as Text;
         _labelTime = View.findDrawableById("id_time") as Text;
@@ -237,12 +260,14 @@ class CurlingView extends WatchUi.View {
         var recording = isSessionRecording();
         var active = isSessionActive();
 
+        _lastScreenUpdate = System.getTimer();
+
         for( var i = 0; i < _labelEstimates.size(); ++i) {
             _labelEstimates[i].setColor(0x214C0C);
         }   
 
-        _labelDrawCount.setText("" + _curling.getDrawCount(true) + "/" + _curling.getDrawCount(false));
-        _labelHitCount.setText("" + _curling.getHitCount(true) + "/" + _curling.getHitCount(false));
+        //_labelDrawCount.setText("" + _curling.getDrawCount(true) + "/" + _curling.getDrawCount(false));
+        //_labelHitCount.setText("" + _curling.getHitCount(true) + "/" + _curling.getHitCount(false));
         _labelBrushStrokeCount.setText("" + _curling.getBrushStrokeCount(true) + "/" + _curling.getBrushStrokeCount(false));
         _labelEndCount.setText("" + _curling.getCurrentEnd());
 
@@ -284,7 +309,9 @@ class CurlingView extends WatchUi.View {
     }
 
     public function onClockUpdate() as Void {
-        WatchUi.requestUpdate();
+        if (_curling.isStopwatchRunning() || (System.getTimer() - _lastScreenUpdate) >= 1000) {
+            WatchUi.requestUpdate();
+        }
     }
 
     public function onStop() as Void {
@@ -307,13 +334,16 @@ class CurlingView extends WatchUi.View {
 
     public function onStopwatchToggle() as Void {
         _curling.toggleStopwatch();
+        WatchUi.requestUpdate();
     }
 
     public function addSplit(result as Number) as Void {
         _curling.addSplit(result);
+        WatchUi.requestUpdate();
     }
 
     public function startExtraLogging(duration as Number) as Void {
         _curling.startExtraLogging(duration);
+        WatchUi.requestUpdate();
     }
 }

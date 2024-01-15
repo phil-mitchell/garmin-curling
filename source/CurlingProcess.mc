@@ -287,7 +287,7 @@ class CurlingProcess {
     }
 
     public function getStopwatchValue() as Number {
-        if (_stopwatchBase != 0) {
+        if (isStopwatchRunning()) {
             _stopwatch = System.getTimer() - _stopwatchBase;
         }
         return _stopwatch;
@@ -303,12 +303,16 @@ class CurlingProcess {
     }
 
     public function toggleStopwatch() {
-        if (_stopwatchBase != 0) {
+        if (isStopwatchRunning()) {
             getStopwatchValue();
             _stopwatchBase = 0;
         } else {
             _stopwatchBase = System.getTimer();
         }
+    }
+
+    public function isStopwatchRunning() as Boolean {
+        return _stopwatchBase != 0;
     }
 
     public function startExtraLogging(duration as Number) as Void {

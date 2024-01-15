@@ -1,7 +1,7 @@
 # Curling activity tracker for Garmin devices
 
 This app for Garmin devices allows you to track your curling game as activities.
-It counts brush strokes, draws, and hits for each end.
+It counts brush strokes for each end.
 
 It also includes a stopwatch that sweepers can use to measure backline-to-hog split-time.
 The stopwatch also includes an estimate for where the rock will stop.
