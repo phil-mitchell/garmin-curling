@@ -21,7 +21,6 @@ class CurlingProcess {
     private var _y as Array<Number> = [0] as Array<Number>;
     private var _yPrev as Array<Number> = [0] as Array<Number>;
     private var _z as Array<Number> = [0] as Array<Number>;
-    private var _filter as FirFilter?;
 
     private var _pulse as Number = 0;
 
@@ -60,13 +59,15 @@ class CurlingProcess {
     private var _accelYField;    
     private var _accelZField;    
 
+    private var _sampleRate as Number = 25;
+
     //! Constructor
     public function initialize() {
-        // initialize FIR filter
-        var options = {:coefficients => [-0.0278f, 0.9444f, -0.0278f] as Array<Float>, :gain => 0.001f};
+        if (Sensor.getMaxSampleRate() < _sampleRate) {
+            _sampleRate = Sensor.getMaxSampleRate();
+        }
         try {
             Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
-            //_filter = new Math.FirFilter(options);
             _logger = new SensorLogging.SensorLogger({:accelerometer => {:enabled => true}});
         } catch (e) {
             System.println(e.getErrorMessage());
@@ -80,11 +81,7 @@ class CurlingProcess {
         if (accelData != null) {
             _yPrev = _y;
             _lastBrushStrokeCounted -= _yPrev.size();
-            if (_filter != null) {
-                //_x = _filter.apply(accelData.x);
-            } else {
-                _x = accelData.x;
-            }
+            _x = accelData.x;
             _y = accelData.y;
             _z = accelData.z;
 
@@ -94,10 +91,9 @@ class CurlingProcess {
                 _accelZField.setData(_z);
                 _extraLoggingCount--;
             } else if (_extraLoggingCount == 0) {
-                var zeroArray = ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as Array<Number>).slice(0,Sensor.getMaxSampleRate());
-                _accelXField.setData(zeroArray);
-                _accelYField.setData(zeroArray);
-                _accelZField.setData(zeroArray);
+                _accelXField.setData([] as Array<Number>);
+                _accelYField.setData([] as Array<Number>);
+                _accelZField.setData([] as Array<Number>);
                 _extraLoggingCount--;
             }
             onAccelData();
@@ -122,17 +118,17 @@ class CurlingProcess {
             _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
 
             _accelXField = _session.createField("acc X", 9, FitContributor.DATA_TYPE_SINT16, {
-                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
+                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
             _accelYField = _session.createField("acc Y", 10, FitContributor.DATA_TYPE_SINT16, {
-                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
+                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
             _accelZField = _session.createField("acc Z", 11, FitContributor.DATA_TYPE_SINT16, {
-                :count => Sensor.getMaxSampleRate(), :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
+                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
 
             _endNumber = 1;
         }
 
         // initialize accelerometer
-        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => Sensor.getMaxSampleRate()}};
+        var options = {:period => 1, :accelerometer => {:enabled => true, :sampleRate => _sampleRate}};
         try {
             Sensor.registerSensorDataListener(method(:accelCallback), options);
             if (_session != null) {

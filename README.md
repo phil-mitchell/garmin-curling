@@ -79,3 +79,8 @@ The following physical devices were also tested:
 - vivoactive 4
 
 <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik"> Freepik </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+## Metadata
+
+App guid for beta: 25078dd5-320b-441e-97b0-238609c16e76
+App guid for prod: 39ad73d1-664e-4b60-b81c-f696ff5516f7
