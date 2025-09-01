@@ -38,8 +38,6 @@ class CurlingProcess {
     private var _splitTimes as Array<Number> = [99999, 4400, 4300, 4200, 4100, 4000, 3900, 3800, 3700, 3600, 3500, 3400, 3300, 3200] as Array<Number>;
     private var _recordedTimes as Array<Number> = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1] as Array<Number>;
 
-    private var _extraLoggingCount = -1;
-
     private var _logger as SensorLogger?;
     private var _session as Session?;
 
@@ -54,10 +52,6 @@ class CurlingProcess {
     private var _intervalHitsField;
     private var _lapHitsField;
     private var _sessionHitsField;
-
-    private var _accelXField;    
-    private var _accelYField;    
-    private var _accelZField;    
 
     private var _sampleRate as Number = 25;
 
@@ -84,18 +78,6 @@ class CurlingProcess {
             _x = accelData.x;
             _y = accelData.y;
             _z = accelData.z;
-
-            if (_extraLoggingCount > 0) {
-                _accelXField.setData(_x);
-                _accelYField.setData(_y);
-                _accelZField.setData(_z);
-                _extraLoggingCount--;
-            } else if (_extraLoggingCount == 0) {
-                _accelXField.setData([] as Array<Number>);
-                _accelYField.setData([] as Array<Number>);
-                _accelZField.setData([] as Array<Number>);
-                _extraLoggingCount--;
-            }
             onAccelData();
         }
     }
@@ -116,13 +98,6 @@ class CurlingProcess {
             _intervalHitsField = _session.createField("Hits", 6, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
             _lapHitsField = _session.createField("End hits", 7, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
             _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
-
-            _accelXField = _session.createField("acc X", 9, FitContributor.DATA_TYPE_SINT16, {
-                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
-            _accelYField = _session.createField("acc Y", 10, FitContributor.DATA_TYPE_SINT16, {
-                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
-            _accelZField = _session.createField("acc Z", 11, FitContributor.DATA_TYPE_SINT16, {
-                :count => _sampleRate, :mesgType => FitContributor.MESG_TYPE_RECORD as Number, :units => "millig-units"});
 
             _endNumber = 1;
         }
@@ -309,14 +284,6 @@ class CurlingProcess {
 
     public function isStopwatchRunning() as Boolean {
         return _stopwatchBase != 0;
-    }
-
-    public function startExtraLogging(duration as Number) as Void {
-        _extraLoggingCount = duration;
-    }
-
-    public function getExtraLoggingDuration() as Number {
-        return _extraLoggingCount;
     }
 
     public function getCurrentEnd() as Number {

@@ -27,9 +27,9 @@ class CurlingApp extends Application.AppBase {
 
     //! Return the initial view for the app
     //! @return Array [View]
-    public function getInitialView() as Array<Views or InputDelegates>? {
+    public function getInitialView() {
         _view = new $.CurlingView();
-        return [_view, new $.BaseInputDelegate(_view)] as Array<Views or InputDelegates>;
+        return [_view, new $.BaseInputDelegate(_view)];
     }
 
 }
