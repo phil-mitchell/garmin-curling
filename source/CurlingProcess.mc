@@ -24,12 +24,15 @@ class CurlingProcess {
 
     private var _pulse as Number = 0;
 
-    private var _drawCount as Number = 0;
-    private var _hitCount as Number = 0;
     private var _brushStrokeCount as Number = 0;
     private var _lastBrushStrokeCounted as Number = 0;
     private var _lastIntervalBrushStrokeCountRecorded as Number = 0;
     private var _lastSessionBrushStrokeCountRecorded as Number = 0;
+
+    private var _stepsCount as Number = 0;
+    private var _lastIntervalStepsCountRecorded as Number = 0;
+    private var _lastSessionStepsCountRecorded as Number = 0;
+    private var _stepCountAtLapStart as Number = 0;
 
     private var _endNumber as Number = 0;
 
@@ -45,13 +48,9 @@ class CurlingProcess {
     private var _lapBrushStrokesField;
     private var _sessionBrushStrokesField;
 
-    private var _intervalDrawsField;
-    private var _lapDrawsField;
-    private var _sessionDrawsField;
-
-    private var _intervalHitsField;
-    private var _lapHitsField;
-    private var _sessionHitsField;
+    private var _intervalStepsField;
+    private var _lapStepsField;
+    private var _sessionStepsField;
 
     private var _sampleRate as Number = 25;
 
@@ -91,15 +90,12 @@ class CurlingProcess {
             _lapBrushStrokesField = _session.createField("End brush strokes", 1, FitContributor.DATA_TYPE_UINT16, {:mesgType => FitContributor.MESG_TYPE_LAP});
             _sessionBrushStrokesField = _session.createField("Total brush strokes", 2, FitContributor.DATA_TYPE_UINT16, {:mesgType => FitContributor.MESG_TYPE_SESSION});
 
-            _intervalDrawsField = _session.createField("Draws", 3, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
-            _lapDrawsField = _session.createField("End draws", 4, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
-            _sessionDrawsField = _session.createField("Total draws", 5, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
-
-            _intervalHitsField = _session.createField("Hits", 6, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
-            _lapHitsField = _session.createField("End hits", 7, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_LAP});
-            _sessionHitsField = _session.createField("Total hits", 8, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_SESSION});
+            _intervalStepsField = _session.createField("Steps", 3, FitContributor.DATA_TYPE_UINT8, {:mesgType => FitContributor.MESG_TYPE_RECORD});
+            _lapStepsField = _session.createField("End steps", 4, FitContributor.DATA_TYPE_UINT16, {:mesgType => FitContributor.MESG_TYPE_LAP});
+            _sessionStepsField = _session.createField("Total steps", 5, FitContributor.DATA_TYPE_UINT16, {:mesgType => FitContributor.MESG_TYPE_SESSION});
 
             _endNumber = 1;
+            _stepCountAtLapStart = getDeviceStepCount();
         }
 
         // initialize accelerometer
@@ -123,11 +119,12 @@ class CurlingProcess {
     }
 
     private function resetData() as Void {
-        _drawCount = 0;
-        _hitCount = 0;
         _brushStrokeCount = 0;
         _lastBrushStrokeCounted = 0;
         _lastIntervalBrushStrokeCountRecorded = 0;
+        _stepsCount = 0;
+        _stepCountAtLapStart = getDeviceStepCount();
+        _lastIntervalStepsCountRecorded = 0;
         _y = [0] as Array<Number>;
         _yPrev = [0] as Array<Number>;
         _stopwatch = 0;
@@ -139,6 +136,7 @@ class CurlingProcess {
         _session = null;
         resetData();
         _lastSessionBrushStrokeCountRecorded = 0;
+        _lastSessionStepsCountRecorded = 0;
         _endNumber = 0;
 
         if (session != null) {
@@ -160,16 +158,33 @@ class CurlingProcess {
         }
     }
 
-    //! Return current throw count
-    //! @return The number of draws counted
-    public function getDrawCount(currentEnd as Boolean) as Number {
-        return _drawCount;
+    public function hasDeviceStepCount() as Boolean {
+        if (Toybox has :ActivityMonitor) {
+            var info = ActivityMonitor.getInfo();
+            if (info != null && info has :steps) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    //! Return current throw count
-    //! @return The number of hits counted
-    public function getHitCount(currentEnd as Boolean) as Number {
-        return _hitCount;
+    public function getDeviceStepCount() as Number {
+        if (Toybox has :ActivityMonitor) {
+            var info = ActivityMonitor.getInfo();
+            if (info != null && info has :steps) {
+                return info.steps;
+            }
+        }
+        return 0;
+    }
+
+    //! Return current step count
+    //! @return The number of steps counted
+    public function getStepCount(currentEnd as Boolean) as Number {
+        if (currentEnd) {
+            return _stepsCount;
+        }
+        return _lastSessionStepsCountRecorded;
     }
 
     //! Return current brush stroke count
@@ -200,6 +215,7 @@ class CurlingProcess {
         var cur_acc_z = 0;
         var prev_acc_y = 0;
         var interval_brush_stroke_count = 0;
+        var interval_step_count = 0;
 
         for (var i = 0; i < _x.size(); ++i) {
             cur_acc_x = _x[i];
@@ -245,7 +261,16 @@ class CurlingProcess {
             _lastIntervalBrushStrokeCountRecorded = 0;
             _intervalBrushStrokesField.setData(interval_brush_stroke_count);
         }
-    }
+
+        _stepsCount = getDeviceStepCount() - _stepCountAtLapStart;
+        interval_step_count = _stepsCount - _lastIntervalStepsCountRecorded;
+        _lastSessionStepsCountRecorded += interval_step_count;
+        _lastIntervalStepsCountRecorded = _stepsCount;
+
+        _lapStepsField.setData(_stepsCount);
+        _sessionStepsField.setData(_lastSessionStepsCountRecorded);
+        _intervalStepsField.setData(interval_step_count);
+    }   
 
     public function isSessionRecording() as Boolean {
         if (_session != null) {

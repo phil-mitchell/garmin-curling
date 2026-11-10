@@ -174,9 +174,8 @@ class BaseInputDelegate extends WatchUi.BehaviorDelegate {
 class CurlingView extends WatchUi.View {
     private var _lastScreenUpdate as Number = 0;
     private var _labelStopwatch as Text?;
-    private var _labelDrawCount as Text?;
-    private var _labelHitCount as Text?;
     private var _labelBrushStrokeCount as Text?;
+    private var _labelStepCount as Text?;
     private var _labelEndCount as Text?;
     private var _labelTime as Text?;
     private var _labelPulse as Text?;
@@ -203,9 +202,8 @@ class CurlingView extends WatchUi.View {
     public function onLayout(dc) as Void {
         setLayout($.Rez.Layouts.MainLayout(dc));
         _labelStopwatch = View.findDrawableById("id_stopwatch") as Text;
-        //_labelDrawCount = View.findDrawableById("id_draw_count") as Text;
-        //_labelHitCount = View.findDrawableById("id_hit_count") as Text;
         _labelBrushStrokeCount = View.findDrawableById("id_brush_stroke_count") as Text;
+        _labelStepCount = View.findDrawableById("id_step_count") as Text;
         _labelEndCount = View.findDrawableById("id_end_count") as Text;
         _labelTime = View.findDrawableById("id_time") as Text;
         _labelPulse = View.findDrawableById("id_pulse") as Text;
@@ -245,8 +243,11 @@ class CurlingView extends WatchUi.View {
             _labelEstimates[i].setColor(0x214C0C);
         }   
 
-        //_labelDrawCount.setText("" + _curling.getDrawCount(true) + "/" + _curling.getDrawCount(false));
-        //_labelHitCount.setText("" + _curling.getHitCount(true) + "/" + _curling.getHitCount(false));
+        if(_curling.hasDeviceStepCount()) {
+            _labelStepCount.setText("" + _curling.getStepCount(true) + "/" + _curling.getStepCount(false));
+        } else {
+            _labelStepCount.setText("--");
+        }
         _labelBrushStrokeCount.setText("" + _curling.getBrushStrokeCount(true) + "/" + _curling.getBrushStrokeCount(false));
         _labelEndCount.setText("" + _curling.getCurrentEnd());
 

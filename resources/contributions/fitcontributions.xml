@@ -8,20 +8,12 @@
         dataLabel="@Strings.brush_stroke_label" unitLabel="@Strings.brush_stroke_units"  />        
 
         <fitField id="3" displayInChart="true" sortOrder = "3" precision="1"
-        chartTitle="@Strings.draw_graph_label" dataLabel="@Strings.draw_label"
-        unitLabel="@Strings.draw_units" fillColor="#FF0000" />
+        chartTitle="@Strings.steps_graph_label" dataLabel="@Strings.steps_label"
+        unitLabel="@Strings.steps_units" fillColor="#00ff00" />
         <fitField id="4" displayInActivityLaps="true" sortOrder = "4" precision="-1"
-        dataLabel="@Strings.draw_label" unitLabel="@Strings.draw_units"  />        
+        dataLabel="@Strings.steps_label" unitLabel="@Strings.steps_units"  />        
         <fitField id="5" displayInActivitySummary="true" sortOrder = "5" precision="-1"
-        dataLabel="@Strings.draw_label" unitLabel="@Strings.draw_units"  />        
-
-        <fitField id="6" displayInChart="true" sortOrder = "6" precision="1"
-        chartTitle="@Strings.hit_graph_label" dataLabel="@Strings.hit_label"
-        unitLabel="@Strings.hit_units" fillColor="#FF0000" />
-        <fitField id="7" displayInActivityLaps="true" sortOrder = "7" precision="-1"
-        dataLabel="@Strings.hit_label" unitLabel="@Strings.hit_units"  />        
-        <fitField id="8" displayInActivitySummary="true" sortOrder = "8" precision="-1"
-        dataLabel="@Strings.hit_label" unitLabel="@Strings.hit_units"  />        
+        dataLabel="@Strings.steps_label" unitLabel="@Strings.steps_units"  />        
 
   <fitField id="9"
             displayInChart="false"

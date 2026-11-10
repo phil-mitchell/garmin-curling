@@ -12,17 +12,12 @@
     <string id="brush_stroke_graph_label">Total brush strokes</string>
     <string id="brush_stroke_units">strokes</string>
 
-    <string id="draw_label">Draws</string>
-    <string id="draw_graph_label">Total draws</string>
-    <string id="draw_units">rocks</string>
+    <string id="steps_label">Steps</string>
+    <string id="steps_graph_label">Total steps</string>
+    <string id="steps_units">steps</string>
 
-    <string id="hit_label">Hits</string>
-    <string id="hit_graph_label">Total hits</string>
-    <string id="hit_units">rocks</string>
-
-    <string id="draw_count">Throw Count</string>
-    <string id="hit_count">Throw Count</string>
     <string id="stroke_count">Brush Stroke Count</string>
+    <string id="steps_count">Steps Count</string>
 
     <string id="accel_unit">millig-units</string>
     <string id="accel_x">acc X</string>
